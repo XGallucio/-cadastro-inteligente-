@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulário de Cadastro</title>
+
+    <style>
+        :root {
+            --azul: #2E6DA4;
+            --verde: #1E7B4B;
+            --vermelho: #C0392B;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--azul);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            padding: 0.75rem 1rem;
+            border: 2px solid #dde1e7;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--azul);
+        }
+
+        input.error {
+            border-color: var(--vermelho);
+            background: #fff5f5;
+        }
+
+        input.success {
+            border-color: var(--verde);
+            background: #f0fff4;
+        }
+
+        .error-msg {
+            color: var(--vermelho);
+            font-size: 0.85rem;
+            min-height: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--azul);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #1f4f7a;
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 1.25rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <h2>Cadastro</h2>
+        <form id="form">
+
+            <div class="form-group">
+                <input type="text" id="nome" placeholder="Nome">
+                <small id="nome-error" class="error-msg"></small>
+            </div>
+
+            <div class="form-group">
+                <input type="email" id="email" placeholder="E-mail">
+                <small id="email-error" class="error-msg"></small>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="senha" placeholder="Senha">
+                <small id="senha-error" class="error-msg"></small>
+            </div>
+
+            <button type="submit">Enviar</button>
+
+        </form>
+    </div>
+
+    <script>
+        const nome = document.getElementById('nome');
+        const email = document.getElementById('email');
+        const senha = document.getElementById('senha');
+        const form = document.getElementById('form');
+
+        nome.addEventListener('blur', () => validarCampo(nome, validarNome));
+        email.addEventListener('blur', () => validarCampo(email, validarEmail));
+        senha.addEventListener('input', () => validarCampo(senha, validarSenha));
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            validarCampo(nome, validarNome);
+            validarCampo(email, validarEmail);
+            validarCampo(senha, validarSenha);
+        });
+
+        function validarCampo(input, funcaoValidadora) {
+            const msgErro = document.getElementById(input.id + '-error');
+            const resultado = funcaoValidadora(input.value);
+
+            if (!resultado.valido) {
+                input.classList.add('error');
+                input.classList.remove('success');
+                msgErro.textContent = resultado.mensagem;
+            } else {
+                input.classList.remove('error');
+                input.classList.add('success');
+                msgErro.textContent = '';
+            }
+        }
+
+        function validarNome(valor) {
+            if (!valor.trim()) {
+                return { valido: false, mensagem: '⚠️ Nome é obrigatório' };
+            }
+            if (valor.length < 3) {
+                return { valido: false, mensagem: '⚠️ Mínimo 3 caracteres' };
+            }
+            return { valido: true };
+        }
+
+        function validarEmail(valor) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!valor) {
+                return { valido: false, mensagem: '⚠️ E-mail obrigatório' };
+            }
+            if (!regex.test(valor)) {
+                return { valido: false, mensagem: '⚠️ Formato inválido' };
+            }
+            return { valido: true };
+        }
+
+        function validarSenha(valor) {
+            if (valor.length < 8) {
+                return { valido: false, mensagem: '⚠️ Mínimo 8 caracteres' };
+            }
+            if (!/[A-Z]/.test(valor)) {
+                return { valido: false, mensagem: '⚠️ Precisa de 1 letra maiúscula' };
+            }
+            if (!/[0-9]/.test(valor)) {
+                return { valido: false, mensagem: '⚠️ Precisa de 1 número' };
+            }
+            return { valido: true };
+        }
+    </script>
+
+</body>
+
+</html>
